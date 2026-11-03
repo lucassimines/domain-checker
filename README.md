@@ -1,24 +1,28 @@
 # Domain Availability Checker
 
-A simple Node.js script to check `.com.br` domain availability using Registro.br.
+A simple Node.js tool to check `.com.br` domain availability using Registro.br, with a lightweight HTML viewer to explore the results.
 
-The script reads domains from a CSV file, checks their availability, and exports the results to a single CSV file, with available domains listed first.
+No frameworks or external dependencies required.
 
 ## Features
 
-- Check `.com.br` domain availability via Registro.br
+- Check `.com.br` domain availability using Registro.br
 - Import domains from a CSV file
 - Export results to a single CSV file
-- Automatically sort available domains to the top
-- Save progress after every check
-- Resume interrupted checks without starting over
+- Sort available domains to the top
+- Save progress automatically after each check
+- Resume interrupted checks
 - Retry failed requests
 - Stop when rate-limited
-- No external dependencies
+- View results through a simple HTML interface
+- Search and filter domains by availability status
+- Reload results without restarting the viewer
+- Upload a CSV file manually
 
 ## Requirements
 
 - Node.js 18 or higher
+- A modern web browser
 
 ## Project Structure
 
@@ -27,10 +31,11 @@ domain-checker/
 ├── check-domains.mjs
 ├── domains.csv
 ├── domain-results.csv
+├── index.html
 └── README.md
 ```
 
-`domain-results.csv` is generated automatically when the script runs.
+`domain-results.csv` is generated automatically after running the script.
 
 ## Getting Started
 
@@ -40,39 +45,66 @@ Create a `domains.csv` file containing the domains you want to check.
 
 ```csv
 domain
-imobly.com.br
-imobify.com.br
-imobix.com.br
-moriva.com.br
-domora.com.br
+example.com.br
+mywebsite.com.br
+newproject.com.br
+sampledomain.com.br
+testbrand.com.br
 ```
 
 All domains must use the `.com.br` extension.
 
-### 2. Run the script
+### 2. Run the domain checker
 
 ```bash
 node check-domains.mjs
 ```
 
-No installation or additional packages are required.
+The script reads `domains.csv`, checks each domain, and saves the results automatically.
 
 ### 3. View the results
 
-The script automatically generates `domain-results.csv`.
+The script generates `domain-results.csv` with the following structure:
 
 ```csv
 domain,status,code
-domora.com.br,AVAILABLE,0
-moriva.com.br,AVAILABLE,0
-imobify.com.br,REGISTERED,2
-imobix.com.br,REGISTERED,2
-imobly.com.br,REGISTERED,2
+newproject.com.br,AVAILABLE,0
+testbrand.com.br,AVAILABLE,0
+example.com.br,REGISTERED,2
+mywebsite.com.br,REGISTERED,2
+sampledomain.com.br,UNKNOWN,5
 ```
 
-_The example above is illustrative and does not represent verified domain availability._
+_Example statuses are illustrative and do not represent actual domain availability._
 
-Results are sorted by status, with domains alphabetically ordered within each group.
+Results are sorted by status, with available domains first and domains alphabetically ordered within each group.
+
+## HTML Viewer
+
+The project includes a lightweight HTML interface for browsing domain results.
+
+### Start the local server
+
+From the project directory, run:
+
+```bash
+npx serve .
+```
+
+Open the local URL displayed in your terminal, typically `http://localhost:3000`.
+
+The viewer automatically loads `domain-results.csv`.
+
+### Viewer Features
+
+- **Dashboard:** Displays total, available, registered, and other domain counts.
+- **Search:** Filter domains by name.
+- **Status filters:** Show all domains or filter by availability status.
+- **Reload:** Refresh results after running the checker.
+- **CSV upload:** Manually select a results file.
+- **Responsive layout:** Works on desktop and mobile browsers.
+
+Alternatively, open `index.html` directly in your browser and use the CSV upload option. Automatic CSV loading requires a local HTTP server.
 
 ## Domain Statuses
 
@@ -85,7 +117,7 @@ Results are sorted by status, with domains alphabetically ordered within each gr
 
 ## Configuration
 
-You can adjust the following constants in `check-domains.mjs`:
+You can customize the following constants in `check-domains.mjs`:
 
 ```javascript
 const INPUT_FILE = "domains.csv";
@@ -97,7 +129,7 @@ const MAX_RETRIES = 2;
 
 | Option        | Description                                        |
 | ------------- | -------------------------------------------------- |
-| `INPUT_FILE`  | CSV file containing domains                        |
+| `INPUT_FILE`  | CSV file containing domains to check               |
 | `OUTPUT_FILE` | CSV file used to save results                      |
 | `DELAY_MS`    | Delay between requests in milliseconds             |
 | `MAX_RETRIES` | Number of retries after the initial failed request |
@@ -114,23 +146,23 @@ node check-domains.mjs
 
 The script will:
 
-1. Load existing results from `domain-results.csv`.
-2. Skip domains already marked as `AVAILABLE` or `REGISTERED`.
+1. Load previously saved results from `domain-results.csv`.
+2. Skip domains marked as `AVAILABLE` or `REGISTERED`.
 3. Retry domains marked as `UNKNOWN` or `ERROR`.
-4. Continue checking the remaining domains.
+4. Continue checking remaining domains.
 
 To start over, delete `domain-results.csv` and run the script again.
 
 ## Example Console Output
 
 ```text
-Total domains: 3509
+Total domains: 500
 Previously checked: 120
-Pending: 3389
+Pending: 380
 
-[1/3389] ✅ imobly.com.br - AVAILABLE
-[2/3389] ❌ imobify.com.br - REGISTERED
-[3/3389] ❌ imobix.com.br - REGISTERED
+[1/380] ✅ newproject.com.br - AVAILABLE
+[2/380] ❌ example.com.br - REGISTERED
+[3/380] ❌ mywebsite.com.br - REGISTERED
 
 ================================
 SUMMARY
@@ -141,6 +173,8 @@ Total checked: 123
 Results saved to: domain-results.csv
 ```
 
+_Illustrative output._
+
 ## Important Notes
 
 The script uses an undocumented Registro.br availability endpoint. Its behavior, response format, and status codes may change without notice.
@@ -149,7 +183,7 @@ The script currently interprets status code `0` as available and `2` as register
 
 Automated requests may be rate-limited or blocked. The configured delay reduces request frequency but does not guarantee access.
 
-Always verify domain availability through the official [Registro.br](https://registro.br/) website before registering a domain.
+Always confirm availability through the official [Registro.br](https://registro.br/) website before registering a domain.
 
 ## License
 
