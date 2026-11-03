@@ -1,0 +1,9 @@
+{
+  "name": "domain-checker",
+  "private": true,
+  "scripts": {
+    "check": "node index.js",
+    "view": "npx serve .",
+    "start": "npm run check & npm run view"
+  }
+}

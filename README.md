@@ -1,8 +1,8 @@
 # Domain Availability Checker
 
-A simple Node.js tool to check `.com.br` domain availability using Registro.br, with a lightweight HTML viewer to explore the results.
+A small Node.js tool to check `.com.br` domain availability using Registro.br, with an HTML viewer for the results.
 
-No frameworks or external dependencies required.
+No project dependencies or framework required. The viewer command uses `npx` to run `serve`.
 
 ## Features
 
@@ -28,7 +28,7 @@ No frameworks or external dependencies required.
 
 ```text
 domain-checker/
-├── check-domains.mjs
+├── index.js
 ├── domains.csv
 ├── domain-results.csv
 ├── index.html
@@ -54,13 +54,29 @@ testbrand.com.br
 
 All domains must use the `.com.br` extension.
 
-### 2. Run the domain checker
+### 2. Run it
+
+Run only the domain checker:
 
 ```bash
-node check-domains.mjs
+npm run check
 ```
 
-The script reads `domains.csv`, checks each domain, and saves the results automatically.
+Run the viewer only (opens a local server):
+
+```bash
+npm run view
+```
+
+Run the checker and viewer together:
+
+```bash
+npm start
+```
+
+`npm start` begins checking domains in the background and keeps the viewer running. Open the local URL printed in the terminal, normally `http://localhost:3000`, then click **Reload** when new results are available.
+
+The checker reads `domains.csv` and saves results automatically.
 
 ### 3. View the results
 
@@ -83,17 +99,7 @@ Results are sorted by status, with available domains first and domains alphabeti
 
 The project includes a lightweight HTML interface for browsing domain results.
 
-### Start the local server
-
-From the project directory, run:
-
-```bash
-npx serve .
-```
-
-Open the local URL displayed in your terminal, typically `http://localhost:3000`.
-
-The viewer automatically loads `domain-results.csv`.
+The viewer automatically loads `domain-results.csv` when started with `npm run view` or `npm start`.
 
 ### Viewer Features
 
@@ -117,7 +123,7 @@ Alternatively, open `index.html` directly in your browser and use the CSV upload
 
 ## Configuration
 
-You can customize the following constants in `check-domains.mjs`:
+You can customize the following constants in `index.js`:
 
 ```javascript
 const INPUT_FILE = "domains.csv";
@@ -141,7 +147,7 @@ Progress is saved automatically after every domain check.
 If the script is interrupted, simply run it again:
 
 ```bash
-node check-domains.mjs
+npm run check
 ```
 
 The script will:
